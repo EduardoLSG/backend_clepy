@@ -1,14 +1,18 @@
 from rest_framework.serializers import ModelSerializer, ValidationError
+from rest_framework import serializers
 from .models import UserModel, LocalizationUserModel
 import django.contrib.auth.password_validation as validators
 from django.core import exceptions
 
 
 class UserCreateSerializer(ModelSerializer):
+    
+    token = serializers.CharField(source='auth_token.key', required=False)
+    
     class Meta:
         model  = UserModel
-        fields = 'id', 'name', 'email', 'phone', 'document', 'photo_profile', 'password'
-        read_only_fields = ('id',)
+        fields = 'id', 'name', 'email', 'phone', 'document', 'photo_profile', 'password', 'token'
+        read_only_fields = 'id', 'token'
         
     def validate(self, attrs):
         
