@@ -3,17 +3,10 @@ from rest_framework.viewsets import ModelViewSet
 from .serializers import  *
 from rest_framework.generics import CreateAPIView
 from rest_framework.views import APIView
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from system.views import DefaultAPIView
 from rest_framework.response import Response
 from rest_framework import status as resp_status
 from django.contrib.auth import authenticate
-
-
-class DefaultAPIView(APIView):
-    authentication_classes = TokenAuthentication,
-    permission_classes     = IsAuthenticated,
-
 
 
 class UserCreateAPIView(CreateAPIView):

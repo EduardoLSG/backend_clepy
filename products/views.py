@@ -1,23 +1,19 @@
 from django.shortcuts import render
-from .models import CategoryModel
-# Create your views here.
+from .models import CategoryModel, ProductModel, PhotoProductModel
+from rest_framework.viewsets import ModelViewSet
+from system.views import DefaultAPIView
+from .serializers import CategorySerializer, ProductSerializer, PhotoProductSerializer
 
 
-list_category = [ 'Informática',
-    'Som e Iluminação',
-    'Música',
-    'Brinquedos para festa',
-    'Eletrodoméstico',
-    'Construção',
-    'Equipamentos fotográficos',
-    'Festas',
-    'Games',
-    'Fitness',
-    'Equipamentos hospitalares',
-    'Outros']
+class CategoryViewset(ModelViewSet, DefaultAPIView):
+    queryset = CategoryModel.objects.all()
+    serializer_class = CategorySerializer
+    
 
-
-# for cat in list_category:
-#     CategoryModel.objects.create(
-#         name = cat
-#     )
+class ProductViewset(ModelViewSet, DefaultAPIView):
+    queryset = ProductModel.objects.all()
+    serializer_class = ProductSerializer
+    
+class PhotoProductViewSet(ModelViewSet, DefaultAPIView):
+    queryset = PhotoProductModel.objects.all()
+    serializer_class = PhotoProductSerializer
