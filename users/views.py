@@ -14,8 +14,29 @@ class UserCreateAPIView(CreateAPIView):
     serializer_class = UserCreateSerializer
 
 
-class DefaultUserViewset(DefaultAPIView, ModelViewSet):
-    
+class LoginAPIView(APIView):
+    def post(self, request, format=None):
+        data = request.data
+
+        email = data.get('email', None)
+        password = data.get('password', None)
+        print(email, password)
+        user = authenticate(email=email, password=password)
+
+        if user is not None:
+            if user.is_active:
+                token = Token.objects.get(user=user)
+                return Response({'token': token.key}, status=resp_status.HTTP_200_OK)
+            else:
+                return Response(status=resp_status.HTTP_403_FORBIDDEN)
+        else:
+            return Response(status=resp_status.HTTP_404_NOT_FOUND)
+
+
+class UserViewSet(DefaultAPIView, ModelViewSet):
+    queryset = UserModel.objects.all()
+    serializer_class  = UserSerializer
+    http_method_names = ['get', 'patch', 'delete']
     
     def validate_user(self, user, user_pk):
         if not user.is_superuser and user_pk != user.pk:
@@ -23,7 +44,6 @@ class DefaultUserViewset(DefaultAPIView, ModelViewSet):
 
         return True, 'Ok'
       
-        
     def create(self, request, *args, **kwargs):
         request.data['user'] = request.user.pk            
         return super().create(request, *args, **kwargs)
@@ -72,32 +92,6 @@ class DefaultUserViewset(DefaultAPIView, ModelViewSet):
             return resp
         
         return super().destroy(request, *args, **kwargs)
-
-    
-
-class LoginAPIView(APIView):
-    def post(self, request, format=None):
-        data = request.data
-
-        email = data.get('email', None)
-        password = data.get('password', None)
-        print(email, password)
-        user = authenticate(email=email, password=password)
-
-        if user is not None:
-            if user.is_active:
-                token = Token.objects.get(user=user)
-                return Response({'token': token.key}, status=resp_status.HTTP_200_OK)
-            else:
-                return Response(status=resp_status.HTTP_403_FORBIDDEN)
-        else:
-            return Response(status=resp_status.HTTP_404_NOT_FOUND)
-
-
-class UserViewSet(DefaultAPIView, ModelViewSet):
-    queryset = UserModel.objects.all()
-    serializer_class = UserSerializer
-    http_method_names = ['get', 'patch', 'delete']
 
 
 class LocalizationUserViewSet(DefaultAPIView, ModelViewSet):

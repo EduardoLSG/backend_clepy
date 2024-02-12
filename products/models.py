@@ -49,11 +49,27 @@ class PhotoProductModel(UUIDModel):
     class Meta:
         verbose_name = _("Photo Product")
         verbose_name_plural = _("Photo Products")
+        unique_together = ('product', 'order')
         
     photo = models.ImageField(_("photo"), upload_to=photo_product_directory_path)
     product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
+    order   = models.IntegerField()
     active  = models.BooleanField(_("active"), default=True)
+    
     
     def __str__(self) -> str:
         return f'{self.product.name} | {self.photo.url[-15:]}'
     
+    def save(self, *args, **kwargs):
+        if not self.order:
+            photos = PhotoProductModel.objects.filter(
+                product=self.product
+            ).order_by('order')
+            
+            if not photos:
+                self.order = 0
+                
+            else:
+                self.order = photos.last().order + 1
+                
+            return super().save(*args, **kwargs)
