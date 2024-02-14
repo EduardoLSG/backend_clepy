@@ -12,13 +12,18 @@ class CategorySerializer(ModelSerializer):
 class ProductSerializer(ModelSerializer):
     
     images = serializers.SerializerMethodField('get_images')
+    status = serializers.CharField(source='get_status_display')
+    user_owner = serializers.SerializerMethodField('get_user_owner')
     
     def get_images(self, obj):
         photos = PhotoProductModel.objects.filter(product=obj.pk).order_by('order')
         data = []
         for photo in photos:
             data.append({'url': photo.photo.url, 'id': str(photo.id)})
-        return data
+        return data    
+    
+    def get_user_owner(self, obj):
+        return {'id': obj.user_owner.id, 'name': obj.user_owner.name}
     
     class Meta:
         model = ProductModel
