@@ -8,10 +8,11 @@ from django.core import exceptions
 class UserCreateSerializer(ModelSerializer):
     
     token = serializers.CharField(source='auth_token.key', required=False)
+    token_firebase = serializers.CharField(required=False)
     
     class Meta:
         model  = UserModel
-        fields = 'id', 'name', 'email', 'phone', 'document', 'photo_profile', 'password', 'token'
+        fields = 'id', 'name', 'email', 'phone', 'document', 'photo_profile', 'password', 'token', 'token_firebase'
         read_only_fields = 'id', 'token'
         
     def validate(self, attrs):
@@ -41,13 +42,10 @@ class UserCreateSerializer(ModelSerializer):
         return user
 
 
-
 class UserSerializer(ModelSerializer):
     class Meta:
         model  = UserModel
-        exclude = ['password',]
-        
-    
+        exclude = ['password',]  
 
 
 class LocalizationUserSerializer(ModelSerializer):

@@ -3,6 +3,7 @@ from .models import CategoryModel, ProductModel, PhotoProductModel
 from rest_framework.viewsets import ModelViewSet
 from system.views import DefaultAPIView
 from .serializers import CategorySerializer, ProductSerializer, PhotoProductSerializer
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework import status as resp_status
 
@@ -52,7 +53,11 @@ class ProductViewset(ModelViewSet, DefaultAPIView):
             return resp
         
         return super().destroy(request, *args, **kwargs)
-    
+
+class ProductListAPIView(ListAPIView, RetrieveAPIView):
+    queryset = ProductModel.objects.all()
+    serializer_class = ProductSerializer
+    throttle_scope   = 'products'
     
 class PhotoProductViewSet(ModelViewSet, DefaultAPIView):
     queryset = PhotoProductModel.objects.all()

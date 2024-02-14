@@ -72,6 +72,7 @@ class UserModel(UUIDModel, AbstractBaseUser, PermissionsMixin):
     type_doc        = models.CharField(_("type document"), max_length=1, choices=(("0", "CPF"), ("1", "CNPJ")), null=True, blank=True)
     
     terms_accept    = models.DateTimeField(_("terms_accept"), null=True, blank=True)
+    token_firebase  = models.CharField(max_length=64, unique=True, null=True, blank=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["name", "phone", "document"]

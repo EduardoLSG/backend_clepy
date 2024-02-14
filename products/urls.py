@@ -11,7 +11,7 @@ router.register(r'photo-product-router', PhotoProductViewSet, basename='photo-pr
 
 
 urlpatterns = [
-
+    path('product-list', ProductListAPIView.as_view(), name='product-list-view')
 ]
 
 urlpatterns += router.urls

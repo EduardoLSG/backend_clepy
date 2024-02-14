@@ -219,3 +219,12 @@ SWAGGER_SETTINGS = {
       }
    }
 }
+
+REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.ScopedRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'products': '5000/day',
+    }
+}
