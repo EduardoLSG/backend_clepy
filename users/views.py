@@ -7,12 +7,55 @@ from system.views import DefaultAPIView
 from rest_framework.response import Response
 from rest_framework import status as resp_status
 from django.contrib.auth import authenticate
-
+from django.core import exceptions
+from django.db import transaction
 
 class UserCreateAPIView(CreateAPIView):
     queryset = UserModel
     serializer_class = UserCreateSerializer
 
+    def create(self, request, *args, **kwargs):
+        try:
+            with transaction.atomic():
+                valid, res = self.validate_user_location(request.data)
+                if not valid:
+                    return Response(res, status=resp_status.HTTP_400_BAD_REQUEST)
+                res = super().create(request, *args, **kwargs)
+                loc_user = self.create_location(res)
+                res.data['city'] = loc_user.city
+                res.data['state'] = loc_user.state
+                res.data['postal_code'] = loc_user.postal_code
+                return res
+        
+        except exceptions.ValidationError as e:
+            return e
+        
+        
+    
+    def validate_user_location(self, data):
+        dict_erros = {}
+        valid = True
+        if 'city' not in data.keys():
+            valid = False
+            dict_erros['city'] =  ['Este campo é obrigatório']
+        
+        if 'state' not in data.keys():
+            valid = False
+            dict_erros['state'] =  ['Este campo é obrigatório']
+        
+        if 'postal_code' not in data.keys():
+            valid = False
+            dict_erros['postal_code'] =  ['Este campo é obrigatório']
+        
+        return valid, dict_erros
+            
+    def create_location(self, res):
+        return LocalizationUserModel.objects.create(
+            user_id = res.data['id'],
+            city = self.request.data['city'],
+            state = self.request.data['state'],
+            postal_code = self.request.data['postal_code']
+        )
 
 class LoginAPIView(APIView):
     def post(self, request, format=None):

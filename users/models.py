@@ -65,7 +65,7 @@ class UserModel(UUIDModel, AbstractBaseUser, PermissionsMixin):
     
     phone           = models.CharField(_("Phone"), max_length=19)
     
-    photo_profile   = models.ImageField(_("Photo Profile"), upload_to=photo_profile_directory_path)
+    photo_profile   = models.FileField(_("Photo Profile"), upload_to=photo_profile_directory_path)
     
     
     document        = models.CharField(_("document"), max_length=17, unique=True)
@@ -101,13 +101,13 @@ class LocalizationUserModel(UUIDModel):
         verbose_name_plural = _("Endereços")
         
     user          = models.ForeignKey(UserModel, on_delete=models.CASCADE)
-    country       = models.CharField(_("Pais"),  max_length=50)
+    country       = models.CharField(_("Pais"),  max_length=50, default='BRASIL')
     state         = models.CharField(_("Estado"), max_length=50)
     city          = models.CharField(_("Cidade"), max_length=50)
-    district      = models.CharField(_("Bairro"), max_length=50)
-    street        = models.CharField(_("Endereço"), max_length=100)
-    number        = models.IntegerField(_("Numero"))
+    postal_code   = models.CharField(_("CEP"), max_length=10)
+    district      = models.CharField(_("Bairro"), max_length=50, null=True, blank=True)
+    street        = models.CharField(_("Endereço"), max_length=100, null=True, blank=True)
+    number        = models.IntegerField(_("Numero"), null=True, blank=True)
     complement    = models.TextField(_("Complemento"), null=True, blank=True)
     reference     = models.TextField(_("Ponto de referência"), null=True, blank=True)
-    postal_code   = models.CharField(_("CEP"), max_length=10)
     main          = models.BooleanField(_("Principal"), default=True)
