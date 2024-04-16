@@ -69,7 +69,7 @@ class LoginAPIView(APIView):
         if user is not None:
             if user.is_active:
                 token = Token.objects.get(user=user)
-                return Response({'token': token.key}, status=resp_status.HTTP_200_OK)
+                return Response({'token': token.key, 'id': user.pk}, status=resp_status.HTTP_200_OK)
             else:
                 return Response(status=resp_status.HTTP_403_FORBIDDEN)
         else:
