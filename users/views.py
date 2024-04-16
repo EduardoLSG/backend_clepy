@@ -82,14 +82,10 @@ class UserViewSet(DefaultAPIView, ModelViewSet):
     http_method_names = ['get', 'patch', 'delete']
     
     def validate_user(self, user, user_pk):
-        if not user.is_superuser and user_pk != user.pk:
+        if not user.is_superuser and user_pk != str(user.pk):
             return False, Response({'msg': 'User sem permissão'}, status=resp_status.HTTP_401_UNAUTHORIZED)
 
         return True, 'Ok'
-      
-    def create(self, request, *args, **kwargs):
-        request.data['user'] = request.user.pk            
-        return super().create(request, *args, **kwargs)
     
     
     def list(self, request, *args, **kwargs):
