@@ -12,7 +12,7 @@ class CategorySerializer(ModelSerializer):
 class ProductSerializer(ModelSerializer):
     
     images = serializers.SerializerMethodField('get_images')
-    status = serializers.CharField(source='get_status_display')
+    status_display = serializers.CharField(source='get_status_display')
     user_owner = serializers.SerializerMethodField('get_user_owner')
     
     def get_images(self, obj):
@@ -28,6 +28,7 @@ class ProductSerializer(ModelSerializer):
     class Meta:
         model = ProductModel
         fields = '__all__'
+        read_only_fields = 'status_display',
      
         
 class PhotoProductSerializer(ModelSerializer):
