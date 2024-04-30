@@ -26,7 +26,7 @@ class ProductViewset(ModelViewSet, DefaultAPIView):
         user = request.user
         user_owner = request.data['user_owner']
         
-        if str(user) != str(user_owner):
+        if str(user.pk) != str(user_owner):
             return  Response({'msg': 'User sem permissão'}, status=resp_status.HTTP_401_UNAUTHORIZED)
                
         return super().create(request, *args, **kwargs) 
