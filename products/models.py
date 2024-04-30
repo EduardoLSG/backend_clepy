@@ -44,6 +44,12 @@ class ProductModel(UUIDModel):
     def __str__(self) -> str:
         return f'{self.name} - {self.model} | {self.category}: {self.get_status_display()}'
     
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.status = StatusProductEnum.WAITING.value
+        
+        return super().save(*args, **kwargs)
+    
 class PhotoProductModel(UUIDModel):
     
     class Meta:

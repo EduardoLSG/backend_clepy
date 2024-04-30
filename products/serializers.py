@@ -11,9 +11,9 @@ class CategorySerializer(ModelSerializer):
 
 class ProductSerializer(ModelSerializer):
     
-    images = serializers.SerializerMethodField('get_images')
-    status_display = serializers.CharField(source='get_status_display')
-    user_owner = serializers.SerializerMethodField('get_user_owner')
+    images = serializers.SerializerMethodField('get_images', required=False)
+    status_display = serializers.CharField(source='get_status_display', required=False)
+    user_owner = serializers.SerializerMethodField('get_user_owner', required=False)
     
     def get_images(self, obj):
         photos = PhotoProductModel.objects.filter(product=obj.pk).order_by('order')
@@ -28,7 +28,7 @@ class ProductSerializer(ModelSerializer):
     class Meta:
         model = ProductModel
         fields = '__all__'
-        read_only_fields = 'status_display',
+        read_only_fields = 'status_display', 'user_owner', 'images'
      
         
 class PhotoProductSerializer(ModelSerializer):
