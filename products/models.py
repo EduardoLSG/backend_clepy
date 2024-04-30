@@ -35,7 +35,7 @@ class ProductModel(UUIDModel):
     category    = models.ForeignKey(CategoryModel, verbose_name=_('Categorias'), on_delete=models.PROTECT)
     price       = models.DecimalField(_('Price'), max_digits=MAX_DIGITS_FIELD, decimal_places=DECIMAL_PLACES_FIELD)
     model       = models.CharField(_('Model'), max_length=65)
-    status      = models.CharField(_('Status'), choices=choices_status, default=StatusProductEnum.WAITING.value, max_length=2)
+    status      = models.CharField(_('Status'), choices=choices_status, default=StatusProductEnum.WAITING.value, max_length=2, blank=True, null=True)
     new         = models.BooleanField(_("New"), default=True)
     weight      = models.FloatField(_("Weight"), null=True, blank=True)
     dimension   = models.CharField(_("Dimension"), max_length=30, default='15x15x15', null=True, blank=True)

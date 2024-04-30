@@ -7,7 +7,7 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework import status as resp_status
 
-class CategoryViewset(ModelViewSet, DefaultAPIView):
+class CategoryViewset(ModelViewSet):
     queryset = CategoryModel.objects.all()
     serializer_class = CategorySerializer
     http_method_names = ['get']  
