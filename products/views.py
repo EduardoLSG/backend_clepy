@@ -69,7 +69,7 @@ class PhotoProductViewSet(ModelViewSet, DefaultAPIView):
     serializer_class = PhotoProductSerializer
     
     def validate_product_user(self, user, photo_pk):
-        if not ProductModel.objects.filter(product__user_id=user, id=photo_pk).exists():
+        if not ProductModel.objects.filter(product__user_id=user.pk, id=photo_pk).exists():
             return False, Response({'msg': 'User sem permissão'}, status=resp_status.HTTP_401_UNAUTHORIZED)
 
         return True, 'Ok'
@@ -77,10 +77,6 @@ class PhotoProductViewSet(ModelViewSet, DefaultAPIView):
     def create(self, request, *args, **kwargs):
         user = request.user
         id_product = request.data['product']
-        user_owner = request.data['user_owner']
-        
-        if str(user) != str(user_owner):
-            return  Response({'msg': 'User sem permissão'}, status=resp_status.HTTP_401_UNAUTHORIZED)
         
         valid_user, resp = self.validate_product_user(user, id_product)
         if not valid_user:
