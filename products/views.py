@@ -24,15 +24,11 @@ class ProductViewset(ModelViewSet, DefaultAPIView):
       
     def create(self, request, *args, **kwargs):
         user = request.user
-        id_product = request.data['product']
         user_owner = request.data['user_owner']
         
         if str(user) != str(user_owner):
             return  Response({'msg': 'User sem permissão'}, status=resp_status.HTTP_401_UNAUTHORIZED)
-        
-        valid_user, resp = self.validate_product_user(user, id_product)
-        if not valid_user:
-            return resp         
+               
         return super().create(request, *args, **kwargs) 
     
     def list(self, request, *args, **kwargs):           
