@@ -13,7 +13,7 @@ class ProductSerializer(ModelSerializer):
     
     images = serializers.SerializerMethodField('get_images', required=False)
     status_display = serializers.CharField(source='get_status_display', required=False)
-    user_owner = serializers.SerializerMethodField('get_user_owner', required=False)
+    user_owner_display = serializers.SerializerMethodField('get_user_owner', required=False)
     
     def get_images(self, obj):
         photos = PhotoProductModel.objects.filter(product=obj.pk).order_by('order')
