@@ -28,7 +28,7 @@ class ProductSerializer(ModelSerializer):
     class Meta:
         model = ProductModel
         fields = '__all__'
-        read_only_fields = 'status_display', 'user_owner_display', 'images'
+        read_only_fields = 'status_display', 'user_owner_display', 'images', 'order'
      
         
 class PhotoProductSerializer(ModelSerializer):

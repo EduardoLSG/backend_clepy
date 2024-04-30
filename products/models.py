@@ -20,8 +20,6 @@ class CategoryModel(UUIDModel):
     def save(self, *args, **kwargs):
         self.name = self.name.upper()
         super().save(*args, **kwargs)
-    
-
 
 class ProductModel(UUIDModel):
     
@@ -55,11 +53,10 @@ class PhotoProductModel(UUIDModel):
     class Meta:
         verbose_name = _("Photo Product")
         verbose_name_plural = _("Photo Products")
-        unique_together = ('product', 'order')
-        
-    photo = models.ImageField(_("photo"), upload_to=photo_product_directory_path)
+
+    photo   = models.ImageField(_("photo"), upload_to=photo_product_directory_path)
     product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
-    order   = models.IntegerField()
+    order   = models.IntegerField(default=0, blank=True, null=True)
     active  = models.BooleanField(_("active"), default=True)
     
     
@@ -71,11 +68,10 @@ class PhotoProductModel(UUIDModel):
             photos = PhotoProductModel.objects.filter(
                 product=self.product
             ).order_by('order')
-            
             if not photos:
                 self.order = 0
                 
             else:
                 self.order = photos.last().order + 1
-                
+               
             return super().save(*args, **kwargs)

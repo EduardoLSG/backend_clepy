@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from .models import CategoryModel, ProductModel, PhotoProductModel
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from system.views import DefaultAPIView
 from .serializers import CategorySerializer, ProductSerializer, PhotoProductSerializer
-from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework import status as resp_status
+
 
 class CategoryViewset(ModelViewSet):
     queryset = CategoryModel.objects.all()
@@ -15,6 +15,7 @@ class CategoryViewset(ModelViewSet):
 class ProductViewset(ModelViewSet, DefaultAPIView):
     queryset = ProductModel.objects.all()
     serializer_class = ProductSerializer
+    throttle_scope   = 'products'
     
     def validate_product_user(self, user, product_pk):
         if not ProductModel.objects.filter(user_id=user, id=product_pk).exists():
@@ -59,26 +60,33 @@ class ProductViewset(ModelViewSet, DefaultAPIView):
         
         return super().destroy(request, *args, **kwargs)
 
-class ProductListAPIView(ListAPIView, RetrieveAPIView):
+class ProductReadOnlyViewset(ReadOnlyModelViewSet):
     queryset = ProductModel.objects.all()
     serializer_class = ProductSerializer
     throttle_scope   = 'products'
-    
+ 
 class PhotoProductViewSet(ModelViewSet, DefaultAPIView):
     queryset = PhotoProductModel.objects.all()
     serializer_class = PhotoProductSerializer
+    throttle_scope   = 'products'
     
-    def validate_product_user(self, user):
-        if not PhotoProductModel.objects.filter(product__user_owner=user).exists():
+    def validate_photo_product_user(self, user, id_photo):
+        if not PhotoProductModel.objects.filter(product__user_owner=user, id = id_photo).exists():
             return False, Response({'msg': 'User sem permissão'}, status=resp_status.HTTP_401_UNAUTHORIZED)
 
+        return True, 'Ok'
+    
+    def validate_product_user(self, user, product):
+        if not ProductModel.objects.filter(id = product, user_owner=user).exists():
+            return False, Response({'msg': 'User sem permissão'}, status=resp_status.HTTP_401_UNAUTHORIZED)
+        
         return True, 'Ok'
       
     def create(self, request, *args, **kwargs):
         user = request.user
         id_product = request.data['product']
         
-        valid_user, resp = self.validate_product_user(user)
+        valid_user, resp = self.validate_product_user(user, id_product)
         if not valid_user:
             return resp
              
@@ -92,9 +100,9 @@ class PhotoProductViewSet(ModelViewSet, DefaultAPIView):
     
     def update(self, request, *args, **kwargs):
         user       = request.user
-        id_product = kwargs.get('pk')
+        id_photo = kwargs.get('pk')
         
-        valid_user, resp = self.validate_product_user(user)
+        valid_user, resp = self.validate_photo_product_user(user, id_photo)
         if not valid_user:
             return resp
         
@@ -102,9 +110,9 @@ class PhotoProductViewSet(ModelViewSet, DefaultAPIView):
 
     def destroy(self, request, *args, **kwargs):      
         user    = request.user
-        id_product = kwargs.get('pk')
+        id_photo = kwargs.get('pk')
         
-        valid_user, resp = self.validate_product_user(user)
+        valid_user, resp = self.validate_photo_product_user(user, id_photo)
         if not valid_user:
             return resp
         
