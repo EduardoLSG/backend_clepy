@@ -7,27 +7,33 @@ services:
     volumes:
       - .:/code
 
-        
+    environment:
+      - DATABASE_HOST=database-1.cny8eseo2ys0.us-east-1.rds.amazonaws.com
+      - DATABASE_USER=postgres
+      - DATABASE_PASS=XvfDLhgzElW4pDHnv9CC
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=postgres
+
     ports:
       - 80:8000
     
-    depends_on:
-      - db
-      - redis
+    # depends_on:
+    #   - db
+    #   - redis
 
-  db:
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_USER: postgres
-      POSTGRES_DB: sys_clepy_db
+  # db:
+  #   image: postgres
+  #   restart: always
+  #   environment:
+  #     POSTGRES_PASSWORD: 1234
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_DB: sys_clepy_db
 
-    ports: 
-      - "5434:5432"
+  #   ports: 
+  #     - "5434:5432"
 
-    volumes:
-      - postgres_db:/var/lib/postgresql/data
+  #   volumes:
+  #     - postgres_db:/var/lib/postgresql/data
 
   # nginx:
   #   build: ./nginx
@@ -37,16 +43,16 @@ services:
   #   depends_on:
   #     - web
 
-  redis:
-    image: redis
-    restart: always
-    ports:
-      - "6379:6379"
+  # redis:
+  #   image: redis
+  #   restart: always
+  #   ports:
+  #     - "6379:6379"
 
-    command: redis-server --save 20 1 --loglevel debug --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81    
+  #   command: redis-server --save 20 1 --loglevel debug --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81    
 
-    volumes:
-      - cache:/data
+  #   volumes:
+  #     - cache:/data
 
 volumes:
   postgres_db:

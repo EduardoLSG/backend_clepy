@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     ### Apps
     'system',
     'users',
-    'products'
+    'products',
+    'payments'
 ]
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://localhost:3000', 'http://localhost:8000', 'https://cdn.ethers.io/', "https://app.aquaverse.pro", "https://aquaverse.pro"]
@@ -102,13 +103,13 @@ WSGI_APPLICATION = 'main.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-'default': {
+    'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': os.environ.get('DATABASE_HOST', 'db'),
+        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
         'USER': os.environ.get('DATABASE_USER', 'postgres'),
         'PASSWORD': os.environ.get('DATABASE_PASS', '1234'),
         'PORT': os.environ.get('DATABASE_PORT', '5432'),
-        'NAME': os.environ.get('DATABASE_NAME', 'sys_clepy_db'),
+        'NAME': os.environ.get('DATABASE_NAME', 'postgres'),
     }
 }
 
@@ -229,6 +230,6 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.ScopedRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'products': '5000/day',
+        'products': '2500/day',
     }
 }
