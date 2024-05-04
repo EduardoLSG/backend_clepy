@@ -52,7 +52,6 @@ INSTALLED_APPS = [
     'system',
     'users',
     'products',
-    'payments'
 ]
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://localhost:3000', 'http://localhost:8000', 'https://cdn.ethers.io/', "https://app.aquaverse.pro", "https://aquaverse.pro"]
