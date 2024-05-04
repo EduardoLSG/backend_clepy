@@ -75,7 +75,6 @@ class LoginAPIView(APIView):
         else:
             return Response(status=resp_status.HTTP_404_NOT_FOUND)
 
-
 class UserViewSet(DefaultAPIView, ModelViewSet):
     queryset = UserModel.objects.all()
     serializer_class  = UserSerializer
@@ -131,7 +130,6 @@ class UserViewSet(DefaultAPIView, ModelViewSet):
             return resp
         
         return super().destroy(request, *args, **kwargs)
-
 
 class LocalizationUserViewSet(DefaultAPIView, ModelViewSet):
     queryset = LocalizationUserModel.objects.all()

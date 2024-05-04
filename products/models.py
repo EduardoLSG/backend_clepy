@@ -36,7 +36,7 @@ class ProductModel(UUIDModel):
     status      = models.CharField(_('Status'), choices=choices_status, default=StatusProductEnum.WAITING.value, max_length=2, blank=True, null=True)
     new         = models.BooleanField(_("New"), default=True)
     weight      = models.FloatField(_("Weight"), null=True, blank=True)
-    dimension   = models.CharField(_("Dimension"), max_length=30, default='15x15x15', null=True, blank=True)
+    dimension   = models.CharField(_("Dimension"), max_length=30, default='00x00x00', null=True, blank=True)
     
     
     def __str__(self) -> str:
