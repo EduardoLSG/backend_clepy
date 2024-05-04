@@ -18,7 +18,7 @@ class ProductViewset(ModelViewSet, DefaultAPIView):
     throttle_scope   = 'products'
     
     def validate_product_user(self, user, product_pk):
-        if not ProductModel.objects.filter(user_id=user, id=product_pk).exists():
+        if not ProductModel.objects.filter(user_owner=user, id=product_pk).exists():
             return False, Response({'msg': 'User sem permissão'}, status=resp_status.HTTP_401_UNAUTHORIZED)
 
         return True, 'Ok'
