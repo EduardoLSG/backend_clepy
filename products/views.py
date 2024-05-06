@@ -17,6 +17,13 @@ class ProductViewset(ModelViewSet, DefaultAPIView):
     serializer_class = ProductSerializer
     throttle_scope   = 'products'
     
+    def get_queryset(self):
+        q = super().get_queryset()
+        if self.request.GET.get('user'):
+            user = self.request.GET.get('user')
+            q.filter(user_owner=user)
+        return q
+    
     def validate_product_user(self, user, product_pk):
         if not ProductModel.objects.filter(user_owner=user, id=product_pk).exists():
             return False, Response({'msg': 'User sem permissão'}, status=resp_status.HTTP_401_UNAUTHORIZED)
@@ -64,6 +71,13 @@ class ProductReadOnlyViewset(ReadOnlyModelViewSet):
     queryset = ProductModel.objects.all()
     serializer_class = ProductSerializer
     throttle_scope   = 'products'
+    
+    def get_queryset(self):
+        q = super().get_queryset()
+        if self.request.GET.get('user'):
+            user = self.request.GET.get('user')
+            q.filter(user_owner=user)
+        return q
  
 class PhotoProductViewSet(ModelViewSet, DefaultAPIView):
     queryset = PhotoProductModel.objects.all()

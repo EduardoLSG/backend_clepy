@@ -1,7 +1,10 @@
+from django.utils.html import format_html
+from typing import Any
 from django.contrib import admin
+from django.db.models.query import QuerySet
+from django.http import HttpRequest
 from .models import ProductModel, CategoryModel, PhotoProductModel
 # Register your models here.
-
 
 @admin.register(CategoryModel)
 class CategoryAdmin(admin.ModelAdmin):
@@ -9,10 +12,25 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(ProductModel)
 class ProductAdmin(admin.ModelAdmin):
-    list_display  = ['user_owner', 'name', 'status', 'price', 'category', 'new']
+    list_display  = ['user_owner', 'name', 'price', 'category', 'status']
     ordering      = ['user_owner']
-    list_filter   = ['user_owner', 'status', 'category']
+    list_filter   = ['user_owner', 'status', 'category', 'status']
     search_fields = ['user_owner__name', 'name', 'model']
+    readonly_fields = ['user_owner', 'name', 'description', 'category', 'price', 'model', 'dimension', 'weight', 'visualizar_img']
+    
+    def visualizar_img(self, obj):
+        
+        imgs = [ f"<img src='{x.photo.url}' />" for x in obj.photoproductmodel_set.all() ]
+        
+        return format_html('<br>'.join(imgs))
+    
+    def get_queryset(self, request):
+        qs = self.model.all_objects.get_queryset()
+
+        ordering = self.ordering or ()
+        if ordering:
+            qs = qs.order_by(*ordering)
+        return qs
 
 
 @admin.register(PhotoProductModel)

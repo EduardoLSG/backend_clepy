@@ -21,12 +21,16 @@ class CategoryModel(UUIDModel):
         self.name = self.name.upper()
         super().save(*args, **kwargs)
 
+class ProductsActiveManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status  = StatusProductEnum.APPROVED.value)
+
 class ProductModel(UUIDModel):
-    
+
     class Meta:
         verbose_name = _('Product')
         verbose_name_plural = _('Products')
-    
+
     user_owner  = models.ForeignKey(UserModel, on_delete=models.PROTECT, verbose_name=_("User Owner")) 
     name        = models.CharField(_("Name"), max_length=50)
     description = models.TextField(_("Description"))    
@@ -36,18 +40,21 @@ class ProductModel(UUIDModel):
     status      = models.CharField(_('Status'), choices=choices_status, default=StatusProductEnum.WAITING.value, max_length=2, blank=True, null=True)
     new         = models.BooleanField(_("New"), default=True)
     weight      = models.FloatField(_("Weight"), null=True, blank=True)
-    dimension   = models.CharField(_("Dimension"), max_length=30, default='15x15x15', null=True, blank=True)
+    dimension   = models.CharField(_("Dimension"), max_length=30, default='00x00x00', null=True, blank=True)
     
-    
+    objects         = ProductsActiveManager()
+    all_objects     = models.Manager()
+
+
     def __str__(self) -> str:
         return f'{self.name} - {self.model} | {self.category}: {self.get_status_display()}'
-    
+
     def save(self, *args, **kwargs):
         if not self.pk:
             self.status = StatusProductEnum.WAITING.value
-        
+       
         return super().save(*args, **kwargs)
-    
+
 class PhotoProductModel(UUIDModel):
     
     class Meta:

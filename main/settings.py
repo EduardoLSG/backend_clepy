@@ -47,11 +47,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'drf_yasg',
+    'storages',
     
     ### Apps
     'system',
     'users',
     'products',
+    
 ]
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://localhost:3000', 'http://localhost:8000', 'https://cdn.ethers.io/', "https://app.aquaverse.pro", "https://aquaverse.pro"]
@@ -62,7 +64,7 @@ CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000", 
     "http://localhost",
     "https://app.aquaverse.pro",
-    "https://aquaverse.pro",    
+    "https://aquaverse.pro" 
 ]
 
 
@@ -104,9 +106,9 @@ WSGI_APPLICATION = 'main.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
+        'HOST': os.environ.get('DATABASE_HOST', 'database-1.cny8eseo2ys0.us-east-1.rds.amazonaws.com'),
         'USER': os.environ.get('DATABASE_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DATABASE_PASS', '1234'),
+        'PASSWORD': os.environ.get('DATABASE_PASS', 'XvfDLhgzElW4pDHnv9CC'),
         'PORT': os.environ.get('DATABASE_PORT', '5432'),
         'NAME': os.environ.get('DATABASE_NAME', 'postgres'),
     }
@@ -174,8 +176,28 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-MEDIA_URL  = 'media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# MEDIA_URL  = 'media/'
+# MEDIA_ROOT = BASE_DIR / 'media'
+
+
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', '')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', '')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'media-clepy')
+AWS_S3_REGION_NAME = 'us-east-1'
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+# For serving static files directly from S3
+AWS_S3_URL_PROTOCOL = 'https:'
+AWS_S3_USE_SSL = True
+AWS_S3_VERIFY = True
+
+
+# Your app endpoint
+AWS_S3_ENDPOINT_URL = os.environ.get('AWS_S3_ENDPOINT_URL', 'https://s3.amazonaws.com')  
+
+MEDIA_URL = f'{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/media/'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
