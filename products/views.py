@@ -91,7 +91,7 @@ class PhotoProductViewSet(ModelViewSet, DefaultAPIView):
         return True, 'Ok'
     
     def validate_product_user(self, user, product):
-        if not ProductModel.objects.filter(id = product, user_owner=user).exists():
+        if not ProductModel.all_objects.filter(id = product, user_owner=user).exists():
             return False, Response({'msg': 'User sem permissão'}, status=resp_status.HTTP_401_UNAUTHORIZED)
         
         return True, 'Ok'
