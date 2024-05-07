@@ -16,13 +16,7 @@ class ProductViewset(ModelViewSet, DefaultAPIView):
     queryset = ProductModel.objects.all()
     serializer_class = ProductSerializer
     throttle_scope   = 'products'
-    
-    def get_queryset(self):
-        q = super().get_queryset()
-        if self.request.GET.get('user'):
-            user = self.request.GET.get('user')
-            q.filter(user_owner=user)
-        return q
+    http_method_names = ['post', 'patch', 'delete']
     
     def validate_product_user(self, user, product_pk):
         if not ProductModel.objects.filter(user_owner=user, id=product_pk).exists():
@@ -38,12 +32,6 @@ class ProductViewset(ModelViewSet, DefaultAPIView):
             return  Response({'msg': 'User sem permissão'}, status=resp_status.HTTP_401_UNAUTHORIZED)
                
         return super().create(request, *args, **kwargs) 
-    
-    def list(self, request, *args, **kwargs):           
-        return super().list(request, *args, **kwargs)
-    
-    def retrieve(self, request, *args, **kwargs):        
-        return super().retrieve(request, *args, **kwargs)
     
     def update(self, request, *args, **kwargs):
         
@@ -68,7 +56,7 @@ class ProductViewset(ModelViewSet, DefaultAPIView):
         return super().destroy(request, *args, **kwargs)
 
 class ProductReadOnlyViewset(ReadOnlyModelViewSet):
-    queryset = ProductModel.objects.all()
+    queryset = ProductModel.only_actives.all()
     serializer_class = ProductSerializer
     throttle_scope   = 'products'
     
@@ -91,7 +79,7 @@ class PhotoProductViewSet(ModelViewSet, DefaultAPIView):
         return True, 'Ok'
     
     def validate_product_user(self, user, product):
-        if not ProductModel.all_objects.filter(id = product, user_owner=user).exists():
+        if not ProductModel.objects.filter(id = product, user_owner=user).exists():
             return False, Response({'msg': 'User sem permissão'}, status=resp_status.HTTP_401_UNAUTHORIZED)
         
         return True, 'Ok'

@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.db.models.query import QuerySet
 from django.http import HttpRequest
 from .models import ProductModel, CategoryModel, PhotoProductModel
+from main.variables import DECIMAL_PLACES_FIELD, MAX_DIGITS_FIELD, choices_status, StatusProductEnum
 # Register your models here.
 
 @admin.register(CategoryModel)
@@ -23,14 +24,6 @@ class ProductAdmin(admin.ModelAdmin):
         imgs = [ f"<img src='{x.photo.url}' />" for x in obj.photoproductmodel_set.all() ]
         
         return format_html('<br>'.join(imgs))
-    
-    def get_queryset(self, request):
-        qs = self.model.all_objects.get_queryset()
-
-        ordering = self.ordering or ()
-        if ordering:
-            qs = qs.order_by(*ordering)
-        return qs
 
 
 @admin.register(PhotoProductModel)
