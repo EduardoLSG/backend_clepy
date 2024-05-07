@@ -42,9 +42,7 @@ class ProductModel(UUIDModel):
     weight      = models.FloatField(_("Weight"), null=True, blank=True)
     dimension   = models.CharField(_("Dimension"), max_length=30, default='00x00x00', null=True, blank=True)
     
-    only_actives = ProductsActiveManager()
-    objects      = models.Manager()
-
+    #only_actives = ProductsActiveManager()
 
     def __str__(self) -> str:
         return f'{self.name} - {self.model} | {self.category}: {self.get_status_display()}'

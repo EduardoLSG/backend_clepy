@@ -1,4 +1,6 @@
 from django.shortcuts import render
+
+from main.variables import StatusProductEnum
 from .models import CategoryModel, ProductModel, PhotoProductModel
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from system.views import DefaultAPIView
@@ -56,7 +58,7 @@ class ProductViewset(ModelViewSet, DefaultAPIView):
         return super().destroy(request, *args, **kwargs)
 
 class ProductReadOnlyViewset(ReadOnlyModelViewSet):
-    queryset = ProductModel.only_actives.all()
+    queryset = ProductModel.objects.filter(status=StatusProductEnum.APPROVED.value)
     serializer_class = ProductSerializer
     throttle_scope   = 'products'
     
