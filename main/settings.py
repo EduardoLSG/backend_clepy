@@ -48,6 +48,9 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'drf_yasg',
     'storages',
+    'oauth2_provider',
+    'social_django',
+    'drf_social_oauth2',
     
     ### Apps
     'system',
@@ -202,6 +205,8 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        'drf_social_oauth2.authentication.SocialAuthentication',
     ),
     
     # 'DEFAULT_THROTTLE_RATES': {
@@ -210,6 +215,27 @@ REST_FRAMEWORK = {
     # }
 }
 
+
+AUTHENTICATION_BACKENDS = (
+    # Google  OAuth2
+
+    'social_core.backends.google.GoogleOAuth2',
+    # drf-social-oauth2
+    'drf_social_oauth2.backends.DjangoOAuth2',
+    # Django
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get('GOOGLE_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('GOOGLE_SECRET')
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+]
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_USER_FIELDS = ['fullname', 'email', 'picture']
 
 CRONJOBS = [
     ('*/4 * * * *', 'crons.resolveWallet.clean_orders'),

@@ -9,6 +9,8 @@ from rest_framework import status as resp_status
 from django.contrib.auth import authenticate
 from django.core import exceptions
 from django.db import transaction
+from drf_social_oauth2.views import ConvertTokenView
+from oauth2_provider.models import AccessToken
 
 class UserCreateAPIView(CreateAPIView):
     queryset = UserModel
@@ -195,3 +197,13 @@ class LocalizationUserViewSet(DefaultAPIView, ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+class CustomConvertTokenView(ConvertTokenView):
+    
+    def post(self, request, *args, **kwargs):
+        res = super().post(request, *args, **kwargs)
+        if res.data.get('access_token'):
+            token = token = AccessToken.objects.get(token=res.data['access_token'])
+            token_ = Token.objects.get(user=token.user)
+            return Response({'token': token_.key, 'id': token.user.pk}, status=resp_status.HTTP_200_OK)
+        
+        return res

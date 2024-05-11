@@ -9,7 +9,8 @@ router.register(r'localization-router', LocalizationUserViewSet, basename='local
 
 urlpatterns = [
     path("register/", UserCreateAPIView.as_view(), name='user-register-api'),
-    path("login/", LoginAPIView.as_view(), name='user-login-api')
+    path("login/", LoginAPIView.as_view(), name='user-login-api'),
+    path("social-auth", CustomConvertTokenView.as_view(), name='custom-convert-token-api')
 ]
 urlpatterns += router.urls
 
