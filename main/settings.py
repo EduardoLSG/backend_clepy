@@ -59,15 +59,12 @@ INSTALLED_APPS = [
     
 ]
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://localhost:3000', 'http://localhost:8000', 'https://cdn.ethers.io/', "https://app.aquaverse.pro", "https://aquaverse.pro"]
+CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://localhost:3000', 'http://localhost:8000']
 
 CORS_ORIGIN_WHITELIST = [
     "http://127.0.0.1:3000", 
     "http://127.0.0.1", 
-    "http://localhost:3000", 
-    "http://localhost",
-    "https://app.aquaverse.pro",
-    "https://aquaverse.pro" 
+    "http://localhost:3000",
 ]
 
 
@@ -232,15 +229,10 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('GOOGLE_SECRET')
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
     'https://www.googleapis.com/auth/userinfo.email',
-    'https://www.googleapis.com/auth/userinfo.profile',
+    'https://www.googleapis.com/auth/userinfo.profile'
 ]
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_USER_FIELDS = ['fullname', 'email', 'picture']
-
-CRONJOBS = [
-    ('*/4 * * * *', 'crons.resolveWallet.clean_orders'),
-    ('*/5 * * * *', 'crons.priceCoins.get_price'),
-]
 
 
 # Default primary key field type
