@@ -78,7 +78,7 @@ class UserModel(UUIDModel, AbstractBaseUser, PermissionsMixin):
     photo_profile   = models.FileField(_("Photo Profile"), upload_to=photo_profile_directory_path)
     
     
-    document        = models.CharField(_("document"), max_length=17, unique=True)
+    document        = models.CharField(_("document"), max_length=17, unique=True, null=True, blank=True)
     type_doc        = models.CharField(_("type document"), max_length=1, choices=(("0", "CPF"), ("1", "CNPJ")), null=True, blank=True)
     
     terms_accept    = models.DateTimeField(_("terms_accept"), null=True, blank=True)
