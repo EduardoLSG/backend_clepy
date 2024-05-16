@@ -79,7 +79,7 @@ class UserModel(UUIDModel, AbstractBaseUser, PermissionsMixin):
     
     
     document        = models.CharField(_("document"), max_length=17, unique=True, null=True, blank=True)
-    type_doc        = models.CharField(_("type document"), max_length=1, choices=(("0", "CPF"), ("1", "CNPJ")), null=True, blank=True)
+    type_doc        = models.CharField(_("type document"), max_length=1, choices=(("0", "CPF"), ("1", "CNPJ"), ("9", "--")), null=True, blank=True)
     
     terms_accept    = models.DateTimeField(_("terms_accept"), null=True, blank=True)
     token_firebase  = models.CharField(max_length=64, unique=True, null=True, blank=True)
@@ -94,10 +94,14 @@ class UserModel(UUIDModel, AbstractBaseUser, PermissionsMixin):
         return f'{self.name} - {self.email}'
 
     def save(self, *args, **kwargs):
+        if self.document == '' or not self.document:
+            self.document = None
+            self.type_doc = '9'
         
-        ## Verificação de Documento para determinar seu tipo
-        doc = self.document.replace('.', '').replace('-', '').replace('/', '')
-        self.type_doc = '0' if len(doc) < 12 else '1'
+        else:
+            ## Verificação de Documento para determinar seu tipo
+            doc = self.document.replace('.', '').replace('-', '').replace('/', '')
+            self.type_doc = '0' if len(doc) < 12 else '1'
         
         super().save(*args, **kwargs)
         Token.objects.get_or_create(user=self)

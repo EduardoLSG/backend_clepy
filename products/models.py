@@ -38,7 +38,6 @@ class ProductModel(UUIDModel):
     price       = models.DecimalField(_('Price'), max_digits=MAX_DIGITS_FIELD, decimal_places=DECIMAL_PLACES_FIELD)
     model       = models.CharField(_('Model'), max_length=65)
     status      = models.CharField(_('Status'), choices=choices_status, default=StatusProductEnum.WAITING.value, max_length=2, blank=True, null=True)
-    new         = models.BooleanField(_("New"), default=True)
     weight      = models.FloatField(_("Weight"), null=True, blank=True)
     dimension   = models.CharField(_("Dimension"), max_length=30, default='00x00x00', null=True, blank=True)
     
