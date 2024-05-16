@@ -7,18 +7,46 @@ from system.views import DefaultAPIView
 from .serializers import CategorySerializer, ProductSerializer, PhotoProductSerializer
 from rest_framework.response import Response
 from rest_framework import status as resp_status
+from rest_framework.permissions import AllowAny
+from rest_framework import filters
 
+class ProductListDefaultAPIView(DefaultAPIView):
+    filter_backends  = [filters.SearchFilter]
+    search_fields = ['name', 'model', 'category__name']
+
+    def get_queryset(self):
+        q = super().get_queryset()
+        if self.request.GET.get('user'):
+            user = self.request.GET.get('user')
+            q = q.filter(user_owner=user)
+        
+        if self.request.GET.get('category'):
+            q = q.filter(category_id = self.request.GET.get('category'))
+
+        return q
 
 class CategoryViewset(ModelViewSet):
     queryset = CategoryModel.objects.all()
     serializer_class = CategorySerializer
     http_method_names = ['get']  
 
-class ProductViewset(ModelViewSet, DefaultAPIView):
+class ProductViewset(ProductListDefaultAPIView, ModelViewSet):
     queryset = ProductModel.objects.all()
     serializer_class = ProductSerializer
     throttle_scope   = 'products'
-    http_method_names = ['post', 'patch', 'delete']
+    http_method_names = ['post', 'patch', 'delete', 'get']
+    
+    def get_queryset(self):
+        q =  super().get_queryset()
+        return q.filter(user_owner=self.request.user)
+
+    def retrieve(self, request, *args, **kwargs):
+        response = super().retrieve(request, *args, **kwargs)
+        if response.data.get('user_owner'):
+            if str(response.data.get('user_owner')) != str(request.user.pk):
+                return Response({'msg': 'User sem permissão'}, status=resp_status.HTTP_401_UNAUTHORIZED)
+
+        return response
     
     def validate_product_user(self, user, product_pk):
         if not ProductModel.objects.filter(user_owner=user, id=product_pk).exists():
@@ -57,18 +85,12 @@ class ProductViewset(ModelViewSet, DefaultAPIView):
         
         return super().destroy(request, *args, **kwargs)
 
-class ProductReadOnlyViewset(ReadOnlyModelViewSet):
+class ProductReadOnlyViewset(ReadOnlyModelViewSet, ProductListDefaultAPIView):
+    permission_classes = AllowAny,
     queryset = ProductModel.objects.filter(status=StatusProductEnum.APPROVED.value)
     serializer_class = ProductSerializer
     throttle_scope   = 'products'
-    
-    def get_queryset(self):
-        q = super().get_queryset()
-        if self.request.GET.get('user'):
-            user = self.request.GET.get('user')
-            q.filter(user_owner=user)
-        return q
- 
+
 class PhotoProductViewSet(ModelViewSet, DefaultAPIView):
     queryset = PhotoProductModel.objects.all()
     serializer_class = PhotoProductSerializer

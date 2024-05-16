@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'oauth2_provider',
     'social_django',
     'drf_social_oauth2',
+    'django_filters',
     
     ### Apps
     'system',
@@ -205,6 +206,7 @@ REST_FRAMEWORK = {
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
         'drf_social_oauth2.authentication.SocialAuthentication',
     ),
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
     
     # 'DEFAULT_THROTTLE_RATES': {
     #     'anon': '1000/day',
