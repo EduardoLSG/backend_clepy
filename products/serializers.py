@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
+
+from main.settings import CLOUDFRONT_AWS
 from .models import CategoryModel, ProductModel, PhotoProductModel
 from django.contrib.humanize.templatetags.humanize import intcomma
 
@@ -24,7 +26,7 @@ class ProductSerializer(ModelSerializer):
         photos = PhotoProductModel.objects.filter(product=obj.pk).order_by('order')
         data = []
         for photo in photos:
-            data.append({'url': f'https://d2ujsdllw4bt72.cloudfront.net/{photo.photo}', 'id': str(photo.id)})
+            data.append({'url': f'{CLOUDFRONT_AWS}{photo.photo}', 'id': str(photo.id)})
         return data    
     
     def get_user_owner(self, obj):

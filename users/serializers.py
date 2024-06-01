@@ -1,5 +1,7 @@
 from rest_framework.serializers import ModelSerializer, ValidationError
 from rest_framework import serializers
+
+from main.settings import CLOUDFRONT_AWS
 from .models import UserModel, LocalizationUserModel
 import django.contrib.auth.password_validation as validators
 from django.core import exceptions
@@ -43,6 +45,12 @@ class UserCreateSerializer(ModelSerializer):
 
 
 class UserSerializer(ModelSerializer):
+    
+    photo_profile = serializers.SerializerMethodField('get_photo_profile')
+    
+    def get_photo_profile(self, obj):
+        return f"{CLOUDFRONT_AWS}{obj.photo_profile}"
+    
     class Meta:
         model  = UserModel
         exclude = ['password',]  
