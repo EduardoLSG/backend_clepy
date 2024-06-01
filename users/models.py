@@ -21,7 +21,7 @@ class CustomUserManager(BaseUserManager):
         email = extra_fields.pop('email', None)
         password = extra_fields.pop('password', '123124')
         name     = extra_fields.pop('name', None)
-        extra_fields['photo_profile'] = extra_fields.pop('picture')
+        extra_fields['photo_profile'] = extra_fields.pop('picture', None)
 
         if not name:
             name = extra_fields.pop('fullname')
@@ -50,7 +50,11 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get("is_superuser") is not True:
             raise ValueError(_("Superuser must have is_superuser=True."))
         
-        return self.create_user(name, email, password, **extra_fields)
+        extra_fields['name'] = name
+        extra_fields['email'] = email
+        extra_fields['password'] = password
+        
+        return self.create_user(**extra_fields)
 
 
 #USERS

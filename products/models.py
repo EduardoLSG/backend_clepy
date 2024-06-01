@@ -4,6 +4,7 @@ from system.models import UUIDModel
 from django.utils.translation import gettext_lazy as _
 from main.variables import DECIMAL_PLACES_FIELD, MAX_DIGITS_FIELD, choices_status, StatusProductEnum
 from main.helpers import photo_product_directory_path
+from django_resized import ResizedImageField
 
 class CategoryModel(UUIDModel):
     
@@ -58,7 +59,7 @@ class PhotoProductModel(UUIDModel):
         verbose_name = _("Photo Product")
         verbose_name_plural = _("Photo Products")
 
-    photo   = models.ImageField(_("photo"), upload_to=photo_product_directory_path)
+    photo   = ResizedImageField(_("photo"), size=[900, 700], upload_to=photo_product_directory_path)
     product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
     order   = models.IntegerField(default=0, blank=True, null=True)
     active  = models.BooleanField(_("active"), default=True)
@@ -77,5 +78,6 @@ class PhotoProductModel(UUIDModel):
                 
             else:
                 self.order = photos.last().order + 1
-               
-            return super().save(*args, **kwargs)
+        
+        return super().save(*args, **kwargs)       
+        
