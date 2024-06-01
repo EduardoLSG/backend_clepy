@@ -28,6 +28,6 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(PhotoProductModel)
 class PhotoProductAdmin(admin.ModelAdmin):
-    list_display = ['photo', 'product', 'active']
+    list_display = ['product', 'photo', 'active']
     list_filter = ['product', 'active']
     

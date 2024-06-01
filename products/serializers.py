@@ -24,7 +24,7 @@ class ProductSerializer(ModelSerializer):
         photos = PhotoProductModel.objects.filter(product=obj.pk).order_by('order')
         data = []
         for photo in photos:
-            data.append({'url': photo.photo.url, 'id': str(photo.id)})
+            data.append({'url': f'https://d2ujsdllw4bt72.cloudfront.net/{photo.photo}', 'id': str(photo.id)})
         return data    
     
     def get_user_owner(self, obj):
