@@ -1,9 +1,16 @@
+import base64
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from emails.enum_emails import EmailTypeEnum
 from system.models import UUIDModel
 from django.utils.translation import gettext_lazy as _
 from rest_framework.authtoken.models import Token
 from main.helpers import photo_profile_directory_path
+from emails.main import send_email
+from email.mime.image import MIMEImage
+from django.core.mail import EmailMessage
+from django.conf import settings
+from django.template.loader import render_to_string
 
 # Create your models here.
 class CustomUserManager(BaseUserManager):
@@ -16,8 +23,6 @@ class CustomUserManager(BaseUserManager):
         """
         Create and save a User with the given email and password.
         """
-        print(extra_fields)
-
         email = extra_fields.pop('email', None)
         password = extra_fields.pop('password', '123124')
         name     = extra_fields.pop('name', None)
@@ -106,12 +111,40 @@ class UserModel(UUIDModel, AbstractBaseUser, PermissionsMixin):
             ## Verificação de Documento para determinar seu tipo
             doc = self.document.replace('.', '').replace('-', '').replace('/', '')
             self.type_doc = '0' if len(doc) < 12 else '1'
-        
+
+        users = UserModel.objects.filter(id=self.pk)
+        send_email_ = False if users.exists() else True
         super().save(*args, **kwargs)
         Token.objects.get_or_create(user=self)
-        
-        
-        
+
+        if send_email_:
+            
+            subject = 'Assunto do E-mail'
+            from_email = settings.EMAIL_HOST_USER
+            to_email = self.email
+            body = 'Aqui está o PDF que você solicitou.'
+            
+            with open('./emails/templates/welcome/EMAIL_MARKETING_page-0001.jpg', 'rb') as f:
+                image_data = f.read()
+            
+            # Renderizar o corpo do e-mail em HTML
+            html_body = render_to_string('templates/welcome/index.html', {'body': body})
+
+            # Criar o e-mail
+            email = EmailMessage(subject, html_body, from_email, [to_email])
+            email.content_subtype = 'html'
+
+            # Anexar o PDF
+            email.attach_file('./emails/templates/welcome/EMAIL_MARKETING.pdf')
+            # Anexar a imagem embutida
+            image = MIMEImage(image_data)
+            image.add_header('Content-ID', '<imagem_embutida>')
+            email.attach(image)
+
+            # Enviar o e-mail
+            email.send() 
+
+
 class LocalizationUserModel(UUIDModel):
     
     class Meta:

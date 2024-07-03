@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'social_django',
     'drf_social_oauth2',
     'django_filters',
+    'django_rest_passwordreset',
     
     ### Apps
     'system',
@@ -85,7 +86,7 @@ ROOT_URLCONF = 'main.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [ BASE_DIR / 'templates', BASE_DIR / 'emails' ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -258,9 +259,21 @@ EMAIL_BACKEND       = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST          = "smtp.gmail.com"
 EMAIL_PORT          = "587"
 EMAIL_USE_TLS       = True
-EMAIL_HOST_USER     = "aquaverse2023@gmail.com"
-EMAIL_HOST_PASSWORD = "hutdtyoecnacvgtb"
-DEFAULT_FROM_EMAIL  = "aquaverse2023@gmail.com"
+EMAIL_HOST_USER     = "appclepy@gmail.com"
+EMAIL_HOST_PASSWORD = "mwpsoebgfhxbidtb"
+DEFAULT_FROM_EMAIL  = "appclepy@gmail.com"
+
+
+
+DJANGO_REST_MULTITOKENAUTH_RESET_TOKEN_EXPIRY_TIME = 1
+
+DJANGO_REST_PASSWORDRESET_TOKEN_CONFIG = {
+    "CLASS": "django_rest_passwordreset.tokens.RandomNumberTokenGenerator",
+    "OPTIONS": {
+        "min_number": 0,
+        "max_number": 999_999
+    }
+}
 
 
 SWAGGER_SETTINGS = {
