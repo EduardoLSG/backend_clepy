@@ -122,7 +122,7 @@ class UserModel(UUIDModel, AbstractBaseUser, PermissionsMixin):
             subject = 'SEJA BEM VINDO A CLEPY'
             from_email = settings.EMAIL_HOST_USER
             to_email = self.email
-            body = ''
+            body = 'bem vindo a clepy'
             
             with open('./emails/templates/welcome/EMAIL_MARKETING_page-0001.jpg', 'rb') as f:
                 image_data = f.read()
