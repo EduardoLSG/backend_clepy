@@ -119,10 +119,10 @@ class UserModel(UUIDModel, AbstractBaseUser, PermissionsMixin):
 
         if send_email_:
             
-            subject = 'Assunto do E-mail'
+            subject = 'SEJA BEM VINDO A CLEPY'
             from_email = settings.EMAIL_HOST_USER
             to_email = self.email
-            body = 'Aqui está o PDF que você solicitou.'
+            body = ''
             
             with open('./emails/templates/welcome/EMAIL_MARKETING_page-0001.jpg', 'rb') as f:
                 image_data = f.read()
