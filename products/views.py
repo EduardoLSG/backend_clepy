@@ -2,6 +2,7 @@ from django.shortcuts import render
 
 from main.variables import StatusProductEnum
 from .models import CategoryModel, ProductModel, PhotoProductModel
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from system.views import DefaultAPIView
 from .serializers import CategorySerializer, ProductSerializer, PhotoProductSerializer
@@ -32,6 +33,7 @@ class CategoryViewset(ModelViewSet):
 
 class ProductViewset(ProductListDefaultAPIView, ModelViewSet):
     queryset = ProductModel.objects.all()
+    pagination_class = LimitOffsetPagination
     serializer_class = ProductSerializer
     throttle_scope   = 'products'
     http_method_names = ['post', 'patch', 'delete', 'get']
@@ -85,10 +87,11 @@ class ProductViewset(ProductListDefaultAPIView, ModelViewSet):
         
         return super().destroy(request, *args, **kwargs)
 
-class ProductReadOnlyViewset(ReadOnlyModelViewSet, ProductListDefaultAPIView):
+class ProductReadOnlyViewset(ProductListDefaultAPIView, ReadOnlyModelViewSet):
     permission_classes = AllowAny,
     queryset = ProductModel.objects.filter(status=StatusProductEnum.APPROVED.value)
     serializer_class = ProductSerializer
+    pagination_class = LimitOffsetPagination
     throttle_scope   = 'products'
 
 class PhotoProductViewSet(ModelViewSet, DefaultAPIView):

@@ -49,7 +49,10 @@ class UserSerializer(ModelSerializer):
     photo_profile = serializers.SerializerMethodField('get_photo_profile')
     
     def get_photo_profile(self, obj):
-        return f"{CLOUDFRONT_AWS}{obj.photo_profile}"
+        if obj.photo_profile:
+            return f"{CLOUDFRONT_AWS}{obj.photo_profile}"
+        else:
+            return ""
     
     class Meta:
         model  = UserModel
